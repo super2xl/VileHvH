@@ -16,6 +16,7 @@ from system_detect import detect_system, OSType
 from steamcmd_installer import SteamCMDInstaller
 from csgo_installer import CSGOInstaller
 from metamod_sourcemod_installer import MetamodSourcemodInstaller
+from server_config import ServerConfigurator
 
 
 def print_banner():
@@ -248,28 +249,106 @@ Examples:
         else:
             logger.info("Skipping Metamod:Source and SourceMod installation")
         
+        # Step 5: Configure HvH Server Settings
+        logger.section("HvH Server Configuration")
+        logger.info("")
+        logger.info("Configuring your server for Hack vs Hack gameplay...")
+        logger.info("")
+        
+        # Prompt for server settings
+        logger.info("Server Configuration:")
+        hostname = input("  Server hostname [VileHvH Server]: ").strip() or "VileHvH Server"
+        rcon_pass = input("  RCON password [change_me]: ").strip() or "change_me"
+        
+        logger.info("")
+        logger.info("Game Server Login Token (GSLT) is required for your server to show in server browser.")
+        logger.info("Get your GSLT from: https://steamcommunity.com/dev/managegameservers")
+        logger.info("(You can skip this now and add it later)")
+        gslt = input("  GSLT Token (or press Enter to skip): ").strip()
+        
+        # Configure HvH settings
+        configurator = ServerConfigurator(install_dir)
+        
+        if not configurator.create_hvh_config(
+            hostname=hostname,
+            rcon_password=rcon_pass,
+            sv_password="",  # Public by default
+            tickrate=128  # HvH standard
+        ):
+            logger.error("Failed to create HvH configuration")
+            return 1
+        
+        # Set CS:GO Legacy version in steam.inf
+        if not configurator.set_legacy_version():
+            logger.warning("Failed to set steam.inf - server may not work correctly!")
+        
+        # Save GSLT if provided
+        if gslt:
+            configurator.save_gslt(gslt)
+        
+        # Generate launch command
+        launch_cmd = configurator.get_hvh_launch_command(
+            map_name="de_mirage",  # HvH favorite
+            tickrate=128,
+            maxplayers=10,
+            gslt=gslt
+        )
+        
         # Success!
         logger.section("Setup Complete!")
-        logger.success("CS:GO Legacy server setup completed successfully!")
+        logger.success("CS:GO Legacy HvH server setup completed successfully!")
+        logger.info("")
+        logger.info("═" * 60)
+        logger.info("  HvH SERVER CONFIGURATION")
+        logger.info("═" * 60)
+        logger.info(f"  Hostname: {hostname}")
+        logger.info(f"  Mode: Deathmatch")
+        logger.info(f"  Tickrate: 128 (optimized for HvH)")
+        logger.info(f"  Starting Map: de_mirage")
+        logger.info(f"  Max Money: $16000 | Buy anytime/anywhere")
+        logger.info(f"  Respawn: Instant")
+        logger.info(f"  Friendly Fire: OFF (utility plugin coming)")
+        logger.info(f"  RCON Password: {rcon_pass}")
+        if gslt:
+            logger.info(f"  GSLT: Configured ✓")
+        else:
+            logger.warning("  GSLT: Not configured (add later)")
+        logger.info("═" * 60)
+        logger.info("")
+        logger.warning("⚠️  IMPORTANT: HvH servers MUST use -insecure flag!")
+        logger.warning("⚠️  This disables VAC to allow cheaters to play")
         logger.info("")
         logger.info("Server installation directory:")
         logger.info(f"  {install_dir}")
         logger.info("")
-        logger.info("Next steps:")
-        logger.info("  1. Configure server settings (server.cfg)")
-        logger.info("  2. Add SourceMod admins if needed")
-        logger.info("  3. Install additional plugins")
-        logger.info("  4. Start your server!")
+        logger.info("Configuration files:")
+        logger.info(f"  Server config: {install_dir}/csgo/cfg/server.cfg")
+        logger.info(f"  steam.inf: {install_dir}/csgo/steam.inf")
+        if gslt:
+            logger.info(f"  GSLT saved: {install_dir}/csgo/gslt.txt")
         logger.info("")
-        
-        if sys_info.os_type == OSType.WINDOWS:
-            logger.info("To start the server (Windows):")
-            logger.info(f"  cd {install_dir}")
-            logger.info("  srcds.exe -game csgo -console -usercon +game_type 0 +game_mode 1 +mapgroup mg_active +map de_dust2")
-        else:
-            logger.info("To start the server (Linux):")
-            logger.info(f"  cd {install_dir}")
-            logger.info("  ./srcds_run -game csgo -console -usercon +game_type 0 +game_mode 1 +mapgroup mg_active +map de_dust2")
+        logger.info("Next steps:")
+        logger.info("  1. Add yourself as SourceMod admin (see below)")
+        logger.info("  2. Install HvH plugins (use scripts/install_plugins.py)")
+        logger.info("  3. Start your server!")
+        logger.info("")
+        logger.info("To add yourself as admin:")
+        logger.info(f"  nano {install_dir}/csgo/addons/sourcemod/configs/admins_simple.ini")
+        logger.info('  Add: "YOUR_STEAM_ID" "z" // Your Name')
+        logger.info("")
+        logger.info("═" * 60)
+        logger.info("  START YOUR HvH SERVER")
+        logger.info("═" * 60)
+        logger.info(f"cd {install_dir}")
+        logger.info(launch_cmd)
+        logger.info("═" * 60)
+        logger.info("")
+        if not gslt:
+            logger.warning("💡 TIP: Get your GSLT from:")
+            logger.warning("   https://steamcommunity.com/dev/managegameservers")
+            logger.warning("   Then add it to the launch command")
+            logger.info("")
+        logger.success("Ready to host HvH! Welcome to new beginnings! 🔥")
         
         return 0
     
