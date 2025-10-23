@@ -8,6 +8,9 @@ import sys
 import argparse
 from pathlib import Path
 
+# Add src directory to path
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+
 from logger import get_logger
 from system_detect import detect_system, OSType
 from steamcmd_installer import SteamCMDInstaller

@@ -47,8 +47,8 @@ Automated installation and configuration scripts for CS:GO Legacy (pre-CS2) serv
 
 1. **Clone or download this repository**:
    ```bash
-   git clone <your-repo-url>
-   cd VileHvH-wip
+   git clone https://github.com/YOUR-USERNAME/VileHvH.git
+   cd VileHvH
    ```
 
 2. **Ensure Python 3.8+ is installed**:
@@ -63,7 +63,7 @@ Automated installation and configuration scripts for CS:GO Legacy (pre-CS2) serv
 ### Quick Start (Interactive Mode)
 
 ```bash
-python3 setup.py
+python3 scripts/setup.py
 ```
 
 This will guide you through:
@@ -75,27 +75,27 @@ This will guide you through:
 ### Custom Installation Directory
 
 ```bash
-python3 setup.py --install-dir /opt/csgo-server
+python3 scripts/setup.py --install-dir /opt/csgo-server
 ```
 
 ### Skip Specific Steps
 
 ```bash
 # Skip SteamCMD installation (if already installed)
-python3 setup.py --skip-steamcmd
+python3 scripts/setup.py --skip-steamcmd
 
 # Skip CS:GO installation (only install mods)
-python3 setup.py --skip-csgo
+python3 scripts/setup.py --skip-csgo
 
 # Skip mod installation
-python3 setup.py --skip-mods
+python3 scripts/setup.py --skip-mods
 ```
 
 ### Disable File Validation
 
 ```bash
 # Skip validation to speed up installation
-python3 setup.py --no-validate
+python3 scripts/setup.py --no-validate
 ```
 
 ## First-Time Steam Login
@@ -109,16 +109,35 @@ On your first run, you'll need to:
 ## Project Structure
 
 ```
-VileHvH-wip/
-├── setup.py                          # Main orchestration script
-├── logger.py                         # Logging system (colored output + files)
-├── system_detect.py                  # OS/distro/package manager detection
-├── steamcmd_installer.py             # SteamCMD installation per platform
-├── csgo_installer.py                 # CS:GO server installation & management
-├── metamod_sourcemod_installer.py    # Metamod & SourceMod installation
-├── requirements.txt                  # Python dependencies (none required)
+VileHvH/
 ├── README.md                         # This file
-└── logs/                             # Log files (created automatically)
+├── requirements.txt                  # Python dependencies (none!)
+├── .gitignore                        # Git ignore rules
+│
+├── 📂 scripts/                       # User-facing scripts
+│   ├── setup.py                      # Main setup script
+│   ├── install_plugins.py            # Plugin installer
+│   └── test_system_detect.py        # System detection test
+│
+├── 📂 src/                           # Core Python modules
+│   ├── __init__.py                   # Package initialization
+│   ├── logger.py                     # Logging system
+│   ├── system_detect.py              # OS/distro detection
+│   ├── steamcmd_installer.py         # SteamCMD installation
+│   ├── csgo_installer.py             # CS:GO server management
+│   ├── metamod_sourcemod_installer.py  # Mod installation
+│   └── plugin_manager.py             # Plugin management
+│
+├── 📂 docs/                          # Documentation
+│   ├── QUICKSTART.md                 # Quick start guide
+│   ├── USAGE.md                      # Detailed usage
+│   ├── PLUGIN_GUIDE.md               # Plugin installation
+│   ├── GITHUB_SETUP.md               # GitHub setup
+│   ├── TODO.md                       # Future roadmap
+│   ├── PROJECT_SUMMARY.md            # Technical overview
+│   └── BANNER.txt                    # ASCII banner
+│
+└── 📂 logs/                          # Log files (auto-created)
     └── setup_YYYYMMDD_HHMMSS.log
 ```
 

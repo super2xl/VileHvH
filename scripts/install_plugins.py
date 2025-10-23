@@ -8,6 +8,10 @@ This script can be extended to install all your favorite HvH plugins!
 
 import sys
 from pathlib import Path
+
+# Add src directory to path
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+
 from logger import get_logger
 from plugin_manager import PluginManager
 
