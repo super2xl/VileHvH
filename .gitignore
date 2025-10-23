@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Steam/Server files (don't commit server installations)
+steamcmd/
+csgo-server/
+*.zip
+*.tar.gz
+*.tgz
+
+# Credentials (never commit these!)
+credentials.txt
+passwords.txt
+steam_credentials.json
+
+# Plugin examples and test files
+CSGO-Essentials-master/
+**/CSGO-Essentials*/
+

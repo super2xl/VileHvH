@@ -1,0 +1,60 @@
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║  ██╗   ██╗██╗██╗     ███████╗    ██╗  ██╗██╗   ██╗██╗  ██╗                 ║
+║  ██║   ██║██║██║     ██╔════╝    ██║  ██║██║   ██║██║  ██║                 ║
+║  ██║   ██║██║██║     █████╗      ███████║██║   ██║███████║                 ║
+║  ██║   ██║██║██║     ██╔══╝      ██╔══██║╚██╗ ██╔╝██╔══██║                 ║
+║  ╚██████╔╝██║███████╗███████╗    ██║  ██║ ╚████╔╝ ██║  ██║                 ║
+║   ╚═════╝ ╚═╝╚══════╝╚══════╝    ╚═╝  ╚═╝  ╚═══╝  ╚═╝  ╚═╝                 ║
+║                                                                              ║
+║              CS:GO Legacy Server Setup & Management Scripts                  ║
+║                Automated Installation for Windows & Linux                    ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+                    Welcome to New Beginnings! 🎮🔥
+              
+              CS:GO Legacy is BACK - HvH servers are ALIVE!
+           Old-school Counter-Strike > CS2 for HvH any day 💯
+           
+═══════════════════════════════════════════════════════════════════════════════
+
+                          🚀 QUICK START 🚀
+                          
+    1. Test your system:  python3 test_system_detect.py
+    2. Run full setup:    python3 setup.py
+    3. Follow prompts for Steam login & installation
+    4. Start your server and dominate!
+    
+═══════════════════════════════════════════════════════════════════════════════
+
+                        ✨ FEATURES ✨
+                        
+    ✓ Cross-Platform (Windows & Linux)
+    ✓ Intelligent OS & Package Manager Detection
+    ✓ Automated SteamCMD Installation
+    ✓ Proper force_install_dir Handling
+    ✓ Steam Guard Support (first-time login)
+    ✓ Metamod:Source & SourceMod Installation
+    ✓ Comprehensive Logging System
+    ✓ Zero Dependencies (Pure Python!)
+    
+═══════════════════════════════════════════════════════════════════════════════
+
+                      📚 DOCUMENTATION 📚
+                      
+    • QUICKSTART.md  - Get started in 30 seconds
+    • README.md      - Full documentation  
+    • USAGE.md       - Detailed usage guide
+    • TODO.md        - Future roadmap
+    • PROJECT_SUMMARY.md - Complete overview
+    
+═══════════════════════════════════════════════════════════════════════════════
+
+              Built with ❤️  for the CS:GO Legacy community
+                    Because Legacy > CS2 for HvH
+                    
+═══════════════════════════════════════════════════════════════════════════════
+
+

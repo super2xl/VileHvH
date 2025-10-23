@@ -1,0 +1,10 @@
+# CS:GO Legacy Server Setup Script
+# Python 3.8+ required
+
+# No external dependencies required for basic functionality
+# All modules use Python standard library only
+
+# Optional: For enhanced features (not required)
+# requests>=2.31.0  # Alternative to urllib for HTTP requests
+# colorama>=0.4.6   # Better color support on Windows
+
