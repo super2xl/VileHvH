@@ -28,7 +28,8 @@ class ServerConfigurator:
                           hostname: str = "VileHvH Server",
                           rcon_password: str = "change_me",
                           sv_password: str = "",
-                          tickrate: int = 128) -> bool:
+                          tickrate: int = 128,
+                          enable_hvh_plugins: bool = False) -> bool:
         """
         Create optimized HvH server configuration
         
@@ -37,6 +38,7 @@ class ServerConfigurator:
             rcon_password: RCON password
             sv_password: Server password (empty = public)
             tickrate: Server tickrate (64 or 128)
+            enable_hvh_plugins: Enable HvH plugin CVars (HvH-gg Essentials)
         
         Returns:
             True if successful
@@ -47,7 +49,7 @@ class ServerConfigurator:
         self.cfg_dir.mkdir(parents=True, exist_ok=True)
         
         # Generate server.cfg
-        config = self._generate_hvh_config(hostname, rcon_password, sv_password, tickrate)
+        config = self._generate_hvh_config(hostname, rcon_password, sv_password, tickrate, enable_hvh_plugins)
         
         server_cfg = self.cfg_dir / "server.cfg"
         
@@ -70,8 +72,28 @@ class ServerConfigurator:
             return False
     
     def _generate_hvh_config(self, hostname: str, rcon_password: str, 
-                            sv_password: str, tickrate: int) -> str:
+                            sv_password: str, tickrate: int, enable_hvh_plugins: bool) -> str:
         """Generate HvH-optimized server.cfg content"""
+        
+        # Prepare HvH plugin configuration section
+        hvh_plugin_config = ""
+        if enable_hvh_plugins:
+            hvh_plugin_config = """
+// ============================================================
+// HVH PLUGIN CONFIGURATION (HvH-gg Essentials)
+// ============================================================
+
+// Basic Setup
+hvh_reset_score 1              // Allow players to reset score with !rs
+hvh_rage_quit 1                // Allow players to rage quit with !rq
+
+// Restriction Setup (Anti-Exploit)
+hvh_restrict_untrusted_angles 1     // Restrict untrusted angles
+hvh_restrict_body_lean 1            // Restrict body lean/roll
+hvh_restrict_extended_angles 1      // Restrict extended angles
+hvh_restrict_fake_duck 0            // Allow fake duck (common HvH technique)
+hvh_restrict_ax 1                   // Restrict anti-exploit/anti-aim abuse
+"""
         
         return f"""// VileHvH CS:GO Legacy Server Configuration
 // Optimized for Hack vs Hack gameplay
@@ -91,7 +113,7 @@ rcon_password "{rcon_password}"
 // This is required for HvH gameplay
 sv_lan 0
 sv_cheats 0              // Keep off even in insecure mode
-sv_pure 1                // Prevent client-side file modifications
+sv_pure 0                // Allow model changers and custom skins (HvH essential)
 
 // ============================================================
 // GAME MODE & RULES (DEATHMATCH FOR HvH)
@@ -246,6 +268,8 @@ inferno_max_flames 16
 // Grenade trajectory
 sv_grenade_trajectory 0
 sv_showimpacts 0
+
+{hvh_plugin_config}
 
 // ============================================================
 // EXECUTION

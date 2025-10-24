@@ -249,7 +249,69 @@ Examples:
         else:
             logger.info("Skipping Metamod:Source and SourceMod installation")
         
-        # Step 5: Configure HvH Server Settings
+        # Step 5: Install HvH Plugins (Optional)
+        logger.section("HvH Plugin Installation")
+        logger.info("")
+        logger.info("Would you like to install recommended HvH plugins?")
+        logger.info("")
+        logger.info("Recommended plugins:")
+        logger.info("  1. HvH-gg Essentials     - Spawn protection, damage info, anti-exploit")
+        logger.info("  2. Item Crash Fix        - Prevents weapon pickup crashes")
+        logger.info("  3. Weapon Selector       - !guns menu for weapon selection")
+        logger.info("")
+        
+        install_plugins_choice = input("Install recommended HvH plugins? (y/n) [y]: ").strip().lower()
+        install_hvh_plugins = install_plugins_choice in ['y', 'yes', '']
+        
+        if install_hvh_plugins:
+            logger.info("")
+            logger.info("Installing HvH plugins from GitHub...")
+            
+            from plugin_manager import PluginManager
+            import subprocess
+            import tempfile
+            import shutil
+            
+            pm = PluginManager(install_dir)
+            
+            hvh_plugins = [
+                ("HvH Essentials", "https://github.com/HvH-gg/CSGO-Essentials.git"),
+                ("Item Crash Fix", "https://github.com/HvH-gg/CSGO-Item-CrashFix.git"),
+                ("Weapon Selector", "https://github.com/HvH-gg/CSGO-WeaponSelector.git"),
+            ]
+            
+            for plugin_name, plugin_url in hvh_plugins:
+                logger.info(f"Installing {plugin_name}...")
+                temp_dir = None
+                
+                try:
+                    # Clone from GitHub
+                    temp_dir = Path(tempfile.mkdtemp(prefix="vilehvh_plugin_"))
+                    result = subprocess.run(
+                        ['git', 'clone', '--depth', '1', plugin_url, str(temp_dir)],
+                        capture_output=True,
+                        text=True,
+                        timeout=60
+                    )
+                    
+                    if result.returncode == 0:
+                        if pm.install_plugin_from_directory(temp_dir):
+                            logger.success(f"{plugin_name} installed!")
+                        else:
+                            logger.warning(f"Failed to install {plugin_name}")
+                    else:
+                        logger.warning(f"Failed to clone {plugin_name}")
+                
+                except Exception as e:
+                    logger.warning(f"Error installing {plugin_name}: {e}")
+                
+                finally:
+                    if temp_dir and temp_dir.exists():
+                        shutil.rmtree(temp_dir, ignore_errors=True)
+            
+            logger.info("")
+        
+        # Step 6: Configure HvH Server Settings
         logger.section("HvH Server Configuration")
         logger.info("")
         logger.info("Configuring your server for Hack vs Hack gameplay...")
@@ -273,11 +335,12 @@ Examples:
             hostname=hostname,
             rcon_password=rcon_pass,
             sv_password="",  # Public by default
-            tickrate=128  # HvH standard
+            tickrate=128,  # HvH standard
+            enable_hvh_plugins=install_hvh_plugins  # Enable plugin CVars if plugins installed
         ):
             logger.error("Failed to create HvH configuration")
             return 1
-        
+            
         # Set CS:GO Legacy version in steam.inf
         if not configurator.set_legacy_version():
             logger.warning("Failed to set steam.inf - server may not work correctly!")
