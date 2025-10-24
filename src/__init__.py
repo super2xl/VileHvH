@@ -3,7 +3,7 @@ VileHvH - CS:GO Legacy Server Setup & Management
 Core package for automated server installation
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __author__ = "VileHvH"
 __description__ = "CS:GO Legacy Server Setup Scripts"
 

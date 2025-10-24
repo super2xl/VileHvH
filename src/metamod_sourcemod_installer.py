@@ -116,6 +116,10 @@ class MetamodSourcemodInstaller:
             # Verify installation
             if self.is_metamod_installed():
                 self.logger.success("Metamod:Source installation verified")
+                
+                # Fix 32-bit/64-bit issue on Linux
+                self._fix_metamod_architecture()
+                
                 return True
             else:
                 self.logger.error("Metamod:Source installation verification failed")
@@ -124,6 +128,50 @@ class MetamodSourcemodInstaller:
         except Exception as e:
             self.logger.error(f"Failed to extract Metamod:Source: {e}")
             return False
+    
+    def _fix_metamod_architecture(self) -> bool:
+        """
+        Fix Metamod architecture issue
+        
+        CS:GO Legacy is 32-bit but sometimes downloads 64-bit Metamod.
+        This creates a symlink from linux64 -> linux32 to force 32-bit usage.
+        
+        Returns:
+            True if successful or not needed
+        """
+        metamod_bin = self.addons_dir / "metamod" / "bin"
+        
+        if not metamod_bin.exists():
+            self.logger.debug("Metamod bin directory not found")
+            return True
+        
+        linux64_dir = metamod_bin / "linux64"
+        linux32_dir = metamod_bin / "linux32"
+        
+        # Check if we have the wrong architecture
+        if linux64_dir.exists() and linux64_dir.is_dir() and not linux64_dir.is_symlink():
+            # Check if there's also a linux32 directory
+            if linux32_dir.exists():
+                self.logger.info("Fixing Metamod architecture (32-bit required)...")
+                try:
+                    # Remove the 64-bit directory
+                    import shutil
+                    shutil.rmtree(linux64_dir)
+                    
+                    # Create symlink: linux64 -> linux32
+                    linux64_dir.symlink_to("linux32")
+                    
+                    self.logger.success("Metamod configured to use 32-bit binaries")
+                    return True
+                except Exception as e:
+                    self.logger.warning(f"Could not fix Metamod architecture: {e}")
+                    return False
+            else:
+                self.logger.debug("No linux32 directory found, assuming correct architecture")
+        else:
+            self.logger.debug("Metamod architecture already correct")
+        
+        return True
     
     def install_sourcemod(self, force: bool = False) -> bool:
         """

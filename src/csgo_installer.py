@@ -209,6 +209,11 @@ class CSGOInstaller:
             
             if process.returncode == 0:
                 self.logger.success("CS:GO server installation complete!")
+                
+                # Fix bundled library issues on Linux
+                if self.sys_info.os_type == OSType.LINUX:
+                    self._fix_bundled_libraries()
+                
                 return True
             else:
                 self.logger.error(f"Installation failed with code {process.returncode}")
@@ -217,6 +222,50 @@ class CSGOInstaller:
         except Exception as e:
             self.logger.error(f"Installation error: {e}")
             return False
+    
+    def _fix_bundled_libraries(self) -> bool:
+        """
+        Fix bundled library conflicts on Linux
+        
+        CS:GO ships with old bundled libraries that conflict with system libs.
+        This renames them so the server uses system libraries instead.
+        
+        Returns:
+            True if successful or not needed
+        """
+        self.logger.info("Fixing bundled library conflicts...")
+        
+        bin_dir = self.install_dir / "bin"
+        if not bin_dir.exists():
+            self.logger.debug("bin directory not found, skipping library fix")
+            return True
+        
+        # Libraries to rename (force use of system versions)
+        libs_to_fix = [
+            "libgcc_s.so.1",
+            "libstdc++.so.6"
+        ]
+        
+        fixed_count = 0
+        for lib in libs_to_fix:
+            lib_path = bin_dir / lib
+            if lib_path.exists():
+                backup_path = bin_dir / f"{lib}.bak"
+                try:
+                    lib_path.rename(backup_path)
+                    self.logger.debug(f"Renamed {lib} -> {lib}.bak")
+                    fixed_count += 1
+                except Exception as e:
+                    self.logger.warning(f"Could not rename {lib}: {e}")
+            else:
+                self.logger.debug(f"{lib} not found, no fix needed")
+        
+        if fixed_count > 0:
+            self.logger.success(f"Fixed {fixed_count} bundled library conflict(s)")
+        else:
+            self.logger.debug("No bundled library fixes needed")
+        
+        return True
     
     def is_installed(self) -> bool:
         """Check if CS:GO server is installed"""
